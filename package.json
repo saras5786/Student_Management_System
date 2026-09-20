@@ -1,0 +1,30 @@
+{
+  "name": "aditya-university-student-management-system",
+  "version": "1.0.0",
+  "description": "Aditya University - Computer Science & Engineering Department Student Management System (AU-SMS)",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "seed": "node server/config/seed.js"
+  },
+  "keywords": [
+    "student-management",
+    "aditya-university",
+    "oop",
+    "express",
+    "sqlite",
+    "cse"
+  ],
+  "author": "Aditya University CSE",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

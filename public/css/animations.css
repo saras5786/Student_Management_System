@@ -1,0 +1,359 @@
+/* ==============================================================================
+   ANIMATIONS & MICRO-INTERACTIONS (LIGHT THEME)
+   File: public/css/animations.css
+   Project: Aditya University Student Management System (AU-SMS)
+   ============================================================================== */
+
+/* ==============================================================================
+   1. STARTUP LOADING SCREEN (LIGHT THEME)
+   ============================================================================== */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s ease;
+}
+
+.loading-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 440px;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+.emblem-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.emblem-glow {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.25) 0%, rgba(2, 132, 199, 0.15) 60%, transparent 80%);
+    animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+.loader-logo {
+    width: 100px;
+    height: 100px;
+    z-index: 2;
+    object-fit: contain;
+    animation: floatEmblem 3s infinite ease-in-out;
+}
+
+.loader-title {
+    font-size: 1.65rem;
+    font-weight: 850;
+    letter-spacing: 0.06em;
+    background: linear-gradient(135deg, #92400e 0%, #b45309 45%, #0f172a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.35rem;
+}
+
+.loader-subtitle {
+    font-size: 0.92rem;
+    color: #475569;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.loader-progress-box {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.loader-bar {
+    width: 100%;
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.loader-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, #d97706, #0284c7);
+    border-radius: 3px;
+    animation: indeterminateProgress 1.6s infinite ease-in-out;
+}
+
+.loading-text {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-family: var(--font-mono);
+    font-weight: 600;
+}
+
+.dots {
+    display: inline-block;
+    animation: ellipsisPulse 1.5s infinite;
+}
+
+/* ==============================================================================
+   KEYFRAME DEFINITIONS
+   ============================================================================== */
+@keyframes pulseGlow {
+    0%, 100% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.15); opacity: 0.9; }
+}
+
+@keyframes floatEmblem {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes indeterminateProgress {
+    0% { left: -40%; width: 40%; }
+    50% { width: 60%; }
+    100% { left: 100%; width: 30%; }
+}
+
+@keyframes ellipsisPulse {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+/* ==============================================================================
+   2. STAGGERED CARD ENTRANCES
+   ============================================================================== */
+.animate-slide-down {
+    animation: slideDownFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-card-1 {
+    animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
+    opacity: 0;
+}
+
+.animate-card-2 {
+    animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.16s forwards;
+    opacity: 0;
+}
+
+.animate-card-3 {
+    animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
+    opacity: 0;
+}
+
+.animate-card-4 {
+    animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.32s forwards;
+    opacity: 0;
+}
+
+@keyframes cardEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDownFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==============================================================================
+   3. BUTTON SPINNER
+   ============================================================================== */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==============================================================================
+   4. CIRCULAR ATTENDANCE RING
+   ============================================================================== */
+.ring-bar {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    stroke-dasharray: 565.48; /* 2 * PI * 90 */
+    stroke-dashoffset: 565.48;
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==============================================================================
+   5. MODAL POPUP ANIMATION (LIGHT THEME)
+   ============================================================================== */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    animation: backdropFade 0.25s ease-out;
+}
+
+.modal-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px;
+    animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes backdropFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -46%) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* ==============================================================================
+   6. TOAST NOTIFICATIONS SLIDE (LIGHT THEME)
+   ============================================================================== */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: auto;
+    background: #ffffff;
+    backdrop-filter: blur(14px);
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    min-width: 320px;
+    max-width: 440px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast.toast-hide {
+    animation: toastSlideOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent-primary);
+    width: 100%;
+    animation: toastTimer 4s linear forwards;
+}
+
+@keyframes toastTimer {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* ==============================================================================
+   7. ACCESSIBILITY: REDUCED MOTION PREFERENCE
+   ============================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    #particle-canvas {
+        display: none;
+    }
+}

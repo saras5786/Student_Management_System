@@ -1,0 +1,144 @@
+/* ==============================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   File: public/css/responsive.css
+   Project: Aditya University Student Management System (AU-SMS)
+   ============================================================================== */
+
+/* Laptops & Standard Monitors (<= 1280px) */
+@media (max-width: 1280px) {
+    .student-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-charts-grid, .analytics-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tablets (<= 992px) */
+@media (max-width: 992px) {
+    .app-header {
+        padding: 0 1rem;
+    }
+
+    .brand-sub {
+        display: none;
+    }
+
+    .admin-sidebar {
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .admin-content-area {
+        padding: 1.2rem;
+    }
+
+    .profile-sections-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .welcome-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* Mobile & Small Screens (<= 768px) */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 64px;
+    }
+
+    .univ-name {
+        font-size: 1rem;
+    }
+
+    .app-sub {
+        display: none;
+    }
+
+    .user-details {
+        display: none;
+    }
+
+    .btn-logout span {
+        display: none;
+    }
+
+    .auth-card {
+        padding: 1.5rem;
+    }
+
+    .form-row-2, .form-row-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input-box {
+        max-width: 100%;
+    }
+
+    .filters-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group select {
+        width: 100%;
+    }
+
+    .pagination-bar {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .pagination-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .charts-row {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Very Small Mobile (<= 480px) */
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-meta {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .meta-item {
+        width: 100%;
+    }
+}
