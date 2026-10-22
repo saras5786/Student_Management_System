@@ -94,4 +94,21 @@ export class StudentController {
             next(err);
         }
     };
+
+    /**
+     * GET /api/students/toppers
+     * Retrieve Dean's list / Top 10 academic achievers
+     */
+    getToppers = async (req, res, next) => {
+        try {
+            const limit = parseInt(req.query.limit) || 10;
+            const toppers = this.#studentService.getTopPerformers(limit);
+            res.json({
+                success: true,
+                toppers
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
 }

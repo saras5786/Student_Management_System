@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aditya University - Student Management System (AU-SMS)</title>
-    <link rel="icon" type="image/png" href="/assets/aditya-university-logo.png">
+    <link rel="icon" type="image/png" href="./assets/aditya-university-logo.png">
     
     <!-- Design Stylesheets -->
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/animations.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/responsive.css">
 
     <!-- Chart.js Library for Data Visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -24,7 +24,7 @@
         <div class="loader-content">
             <div class="emblem-wrapper">
                 <div class="emblem-glow"></div>
-                <img src="/assets/aditya-university-logo.png" alt="Aditya University" class="loader-logo">
+                <img src="./assets/aditya-university-logo.png" alt="Aditya University" class="loader-logo">
             </div>
             <h1 class="loader-title">ADITYA UNIVERSITY</h1>
             <p class="loader-subtitle">Department of Computer Science &amp; Engineering</p>
@@ -36,11 +36,10 @@
     </div>
 
     <!-- ===================================================== -->
-    <!-- 2. INTERACTIVE CANVAS & DYNAMIC COLOR BACKGROUND      -->
-    <!-- Encapsulated 60FPS particle network and ambient aura  -->
+    <!-- 2. INTERACTIVE CANVAS FOR ADITYA BRAND PARTICLES      -->
+    <!-- 60FPS fluid particle physics in Aditya University hues -->
     <!-- ===================================================== -->
     <canvas id="particle-canvas"></canvas>
-    <div id="dynamic-aura" class="dynamic-aura"></div>
 
     <!-- ===================================================== -->
     <!-- 3. MAIN APPLICATION CONTAINER                         -->
@@ -51,11 +50,11 @@
         <header id="app-header" class="app-header">
             <div class="header-brand">
                 <div class="logo-box">
-                    <img src="/assets/aditya-university-logo.png" alt="AU Logo" class="brand-logo">
+                    <img src="./assets/aditya-university-logo.png" alt="AU Logo" class="brand-logo">
                 </div>
                 <div class="brand-info">
                     <div class="brand-main">
-                        <span class="univ-name">ADITYA UNIVERSITY</span>
+                        <span class="univ-name"><span class="brand-aditya">ADITYA</span> <span class="brand-university">UNIVERSITY</span></span>
                         <span class="dept-badge">CSE</span>
                     </div>
                     <span class="app-sub">Student Management System <small class="version-tag">AU-SMS v2.5</small></span>
@@ -90,8 +89,138 @@
             <!-- ================================================= -->
             <section id="view-auth" class="view-section active">
                 <div class="auth-card-container">
-                    <div class="auth-card glass-panel" id="auth-card">
+                    <!-- Ambient Moving University Logos flanking the Login Portal -->
+                    <div class="floating-flank-logo flank-left" aria-hidden="true">
+                        <img src="./assets/aditya-university-logo.png" alt="" class="flank-logo-img">
+                    </div>
+                    <div class="floating-flank-logo flank-right" aria-hidden="true">
+                        <img src="./assets/aditya-university-logo.png" alt="" class="flank-logo-img">
+                    </div>
+
+                    <div class="auth-card" id="auth-card">
                         
+                        <!-- Prominent Moving Aditya University Solar Orrery Emblem -->
+                        <div class="auth-brand-showcase">
+                            <div class="living-solar-orrery-wrap" id="living-solar-orrery">
+                                <svg class="aditya-solar-orrery" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aditya University Living Planetary Emblem">
+                                    <defs>
+                                        <!-- Official Aditya Brand Orange Gradient for Sun Rays -->
+                                        <linearGradient id="adityaSunGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                                            <stop offset="0%" stop-color="#ea580c"/>
+                                            <stop offset="60%" stop-color="#f26522"/>
+                                            <stop offset="100%" stop-color="#fb923c"/>
+                                        </linearGradient>
+
+                                        <!-- Radiant Solar Aura Glow -->
+                                        <radialGradient id="solarAuraGrad" cx="50%" cy="50%" r="50%">
+                                            <stop offset="0%" stop-color="#f26522" stop-opacity="0.45"/>
+                                            <stop offset="60%" stop-color="#fb923c" stop-opacity="0.15"/>
+                                            <stop offset="100%" stop-color="#f26522" stop-opacity="0"/>
+                                        </radialGradient>
+
+                                        <!-- Official Aditya Navy 3D Spherical Planet Gradient -->
+                                        <radialGradient id="adityaPlanetSphere" cx="35%" cy="35%" r="65%">
+                                            <stop offset="0%" stop-color="#38bdf8"/>
+                                            <stop offset="35%" stop-color="#0284c7"/>
+                                            <stop offset="70%" stop-color="#00509d"/>
+                                            <stop offset="100%" stop-color="#003b71"/>
+                                        </radialGradient>
+
+                                        <!-- Classical 5-pointed Celestial Star -->
+                                        <polygon id="celestialStar" points="0,-6 1.8,-1.8 6,-1.8 2.6,0.9 3.9,5.4 0,2.6 -3.9,5.4 -2.6,0.9 -6,-1.8 -1.8,-1.8" fill="#003b71"/>
+
+                                        <!-- Single Curved Solar Flare Ray (pointing north from radius 34 to 76) -->
+                                        <path id="singleSolarRay" d="M 195,166 C 188,154 187,136 205,124 C 205,138 214,152 205,166 Z" fill="url(#adityaSunGrad)"/>
+                                    </defs>
+
+                                    <!-- 1. Ambient Solar Radiance in Center -->
+                                    <circle class="sun-ambient-flare" cx="200" cy="200" r="92" fill="url(#solarAuraGrad)"/>
+
+                                    <!-- 2. Outer Solid Boundary Ring -->
+                                    <circle cx="200" cy="200" r="185" fill="none" stroke="#003b71" stroke-width="4.5"/>
+
+                                    <!-- 3. Concentric Orbital Rings (Celestial Tracks) -->
+                                    <circle cx="200" cy="200" r="158" fill="none" stroke="#003b71" stroke-width="2.6"/>
+                                    <circle cx="200" cy="200" r="122" fill="none" stroke="#003b71" stroke-width="2.6"/>
+                                    <circle cx="200" cy="200" r="88" fill="none" stroke="#003b71" stroke-width="2.2"/>
+
+                                    <!-- 4. Celestial Stars positioned exactly per official emblem -->
+                                    <g transform="translate(227, 28) scale(1.05)" class="twinkle-star-a"><use href="#celestialStar"/></g>
+                                    <g transform="translate(249, 38) scale(1.25)" class="twinkle-star-b"><use href="#celestialStar"/></g>
+                                    <g transform="translate(189, 64) scale(0.95)" class="twinkle-star-a"><use href="#celestialStar"/></g>
+                                    <g transform="translate(38, 214) scale(1.2)" class="twinkle-star-b"><use href="#celestialStar"/></g>
+                                    <g transform="translate(363, 226) scale(1.2)" class="twinkle-star-a"><use href="#celestialStar"/></g>
+                                    <g transform="translate(107, 305) scale(1.1)" class="twinkle-star-b"><use href="#celestialStar"/></g>
+                                    <g transform="translate(293, 305) scale(1.1)" class="twinkle-star-a"><use href="#celestialStar"/></g>
+
+                                    <!-- 6. Cordially Revolving Planetary System -->
+                                    <!-- A. Outer Planet (Revolving along r=158) -->
+                                    <g class="orbit-planet-track-outer">
+                                        <circle cx="200" cy="42" r="10.5" fill="url(#adityaPlanetSphere)" stroke="#ffffff" stroke-width="1.5"/>
+                                    </g>
+
+                                    <!-- B. Middle Orbit Planets (Two planets revolving in harmony along r=122) -->
+                                    <g class="orbit-planet-track-middle">
+                                        <circle cx="200" cy="78" r="9.5" fill="url(#adityaPlanetSphere)" stroke="#ffffff" stroke-width="1.3"/>
+                                        <circle cx="200" cy="322" r="8" fill="url(#adityaPlanetSphere)" stroke="#ffffff" stroke-width="1.2"/>
+                                    </g>
+
+                                    <!-- C. Inner Orbit Planet (Revolving along r=88) -->
+                                    <g class="orbit-planet-track-inner">
+                                        <circle cx="200" cy="112" r="7" fill="url(#adityaPlanetSphere)" stroke="#ffffff" stroke-width="1.2"/>
+                                    </g>
+
+                                    <!-- 7. Moving Middle Sun (16 Fiery Rays & 8 Solar Corona Dots) -->
+                                    <g class="sun-rotation-group">
+                                        <use href="#singleSolarRay" transform="rotate(0, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(22.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(45, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(67.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(90, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(112.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(135, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(157.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(180, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(202.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(225, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(247.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(270, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(292.5, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(315, 200, 200)"/>
+                                        <use href="#singleSolarRay" transform="rotate(337.5, 200, 200)"/>
+
+                                        <!-- 8 Corona Dots between flares (r=54) -->
+                                        <circle cx="210.5" cy="147" r="4.2" fill="#f26522"/>
+                                        <circle cx="245" cy="170" r="4.2" fill="#f26522"/>
+                                        <circle cx="253" cy="210.5" r="4.2" fill="#f26522"/>
+                                        <circle cx="230" cy="245" r="4.2" fill="#f26522"/>
+                                        <circle cx="189.5" cy="253" r="4.2" fill="#f26522"/>
+                                        <circle cx="155" cy="230" r="4.2" fill="#f26522"/>
+                                        <circle cx="147" cy="189.5" r="4.2" fill="#f26522"/>
+                                        <circle cx="170" cy="155" r="4.2" fill="#f26522"/>
+                                    </g>
+
+                                    <!-- 8. Central Solar Core with Official Aditya Delta "A" Emblem -->
+                                    <circle cx="200" cy="200" r="28" fill="#ffffff" stroke="#f26522" stroke-width="2"/>
+
+                                    <g id="adityaDeltaA" fill="#003b71">
+                                        <path d="M 200,183 
+                                                 L 216,212 
+                                                 L 208,212 
+                                                 L 200,195 
+                                                 L 192,212 
+                                                 L 184,212 Z"/>
+                                        <path d="M 194,214.5 L 206,214.5 L 203.5,217.5 L 196.5,217.5 Z"/>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="auth-brand-text">
+                                <h1 class="auth-univ-title"><span class="brand-aditya">ADITYA</span> <span class="brand-university">UNIVERSITY</span></h1>
+                                <p class="auth-dept-title">DEPARTMENT OF COMPUTER SCIENCE &amp; ENGINEERING</p>
+                                <span class="auth-portal-badge">Student Management Portal (AU-SMS)</span>
+                            </div>
+                        </div>
+
                         <!-- Auth Mode Switcher -->
                         <div class="auth-nav-tabs">
                             <button id="tab-btn-student" class="auth-tab-btn active">
@@ -225,6 +354,8 @@
                             <button class="sub-nav-item" data-target="std-tab-marks">My Marks</button>
                             <button class="sub-nav-item" data-target="std-tab-attendance">My Attendance</button>
                             <button class="sub-nav-item" data-target="std-tab-performance">My Performance</button>
+                            <button class="sub-nav-item" data-target="std-tab-simulator">What-If Simulator</button>
+                            <button class="sub-nav-item" data-target="std-tab-toppers">Dean's List</button>
                         </div>
                     </div>
 
@@ -250,6 +381,16 @@
                                     <span class="meta-label">Semester</span>
                                     <span id="std-card-sem" class="meta-val">Semester 1</span>
                                 </div>
+                            </div>
+                            <div class="welcome-actions">
+                                <button type="button" id="btn-print-official-marksheet" class="btn btn-primary btn-sm" title="Print Official Academic Transcript">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    <span>Print Official Marksheet</span>
+                                </button>
                             </div>
                         </div>
 
@@ -442,6 +583,122 @@
                                         <canvas id="chart-student-radar-full"></canvas>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 6: WHAT-IF ACADEMIC SIMULATOR -->
+                    <div id="std-tab-simulator" class="student-tab-pane">
+                        <div class="glass-panel simulator-panel">
+                            <div class="panel-header-row">
+                                <div>
+                                    <h2>What-If Academic Simulator</h2>
+                                    <p>Interactive projection tool: Simulate hypothetical scores across all 5 subjects to project your aggregate percentage, CGPA, and letter grades in real time.</p>
+                                </div>
+                                <div class="simulator-presets-group">
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-sim-reset">Reset to Current</button>
+                                    <button type="button" class="btn btn-primary btn-sm" id="btn-sim-target-a-plus">Target A+ (90%)</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-sim-target-a">Target A (80%)</button>
+                                </div>
+                            </div>
+
+                            <!-- Live Comparison KPI Cards -->
+                            <div class="stats-grid mt-3">
+                                <div class="stat-card glass-panel">
+                                    <span class="stat-title">Simulated Total</span>
+                                    <div class="stat-val font-mono" id="sim-stat-total">0 / 500</div>
+                                    <div class="stat-sub" id="sim-stat-total-diff">Delta: 0 marks</div>
+                                </div>
+                                <div class="stat-card glass-panel">
+                                    <span class="stat-title">Simulated Percentage</span>
+                                    <div class="stat-val font-mono text-orange" id="sim-stat-pct">0.00%</div>
+                                    <div class="stat-sub" id="sim-stat-pct-diff">Delta: +0.00%</div>
+                                </div>
+                                <div class="stat-card glass-panel">
+                                    <span class="stat-title">Simulated Grade</span>
+                                    <div class="stat-val font-mono" id="sim-stat-grade">-</div>
+                                    <div class="stat-sub" id="sim-stat-gpa">Grade Point: - / 10</div>
+                                </div>
+                                <div class="stat-card glass-panel">
+                                    <span class="stat-title">Academic Standing</span>
+                                    <div class="stat-val font-mono text-green" id="sim-stat-status">-</div>
+                                    <div class="stat-sub" id="sim-stat-remarks">Calculation active</div>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Sliders Form -->
+                            <div class="simulator-sliders-grid mt-4">
+                                <div class="sim-slider-row">
+                                    <div class="sim-slider-labels">
+                                        <span class="subject-name">Mathematics</span>
+                                        <div class="slider-val-box">
+                                            <input type="number" min="0" max="100" step="0.5" id="sim-val-math" class="sim-num-input" value="0">
+                                            <span class="max-denom">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" min="0" max="100" step="0.5" id="sim-range-math" class="sim-slider" value="0">
+                                </div>
+
+                                <div class="sim-slider-row">
+                                    <div class="sim-slider-labels">
+                                        <span class="subject-name">Physics</span>
+                                        <div class="slider-val-box">
+                                            <input type="number" min="0" max="100" step="0.5" id="sim-val-physics" class="sim-num-input" value="0">
+                                            <span class="max-denom">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" min="0" max="100" step="0.5" id="sim-range-physics" class="sim-slider" value="0">
+                                </div>
+
+                                <div class="sim-slider-row">
+                                    <div class="sim-slider-labels">
+                                        <span class="subject-name">Python Programming</span>
+                                        <div class="slider-val-box">
+                                            <input type="number" min="0" max="100" step="0.5" id="sim-val-python" class="sim-num-input" value="0">
+                                            <span class="max-denom">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" min="0" max="100" step="0.5" id="sim-range-python" class="sim-slider" value="0">
+                                </div>
+
+                                <div class="sim-slider-row">
+                                    <div class="sim-slider-labels">
+                                        <span class="subject-name">Data Structures</span>
+                                        <div class="slider-val-box">
+                                            <input type="number" min="0" max="100" step="0.5" id="sim-val-ds" class="sim-num-input" value="0">
+                                            <span class="max-denom">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" min="0" max="100" step="0.5" id="sim-range-ds" class="sim-slider" value="0">
+                                </div>
+
+                                <div class="sim-slider-row">
+                                    <div class="sim-slider-labels">
+                                        <span class="subject-name">English</span>
+                                        <div class="slider-val-box">
+                                            <input type="number" min="0" max="100" step="0.5" id="sim-val-english" class="sim-num-input" value="0">
+                                            <span class="max-denom">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <input type="range" min="0" max="100" step="0.5" id="sim-range-english" class="sim-slider" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 7: DEAN'S LIST / TOPPERS LEADERBOARD -->
+                    <div id="std-tab-toppers" class="student-tab-pane">
+                        <div class="glass-panel toppers-panel">
+                            <div class="toppers-header">
+                                <div>
+                                    <h2>CSE Department Dean's List &amp; Hall of Fame</h2>
+                                    <p>Honoring the Top 10 Academic Performers across the Computer Science &amp; Engineering Department</p>
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-toppers">↻ Refresh Leaderboard</button>
+                            </div>
+
+                            <div class="toppers-grid" id="toppers-container">
+                                <!-- Populated dynamically from SQLite via API -->
                             </div>
                         </div>
                     </div>
@@ -642,6 +899,16 @@
                                         <span>Reset</span>
                                     </button>
                                 </div>
+                            </div>
+
+                            <!-- Quick Filter Presets Bar -->
+                            <div class="filter-presets-bar">
+                                <span class="preset-label">Quick Presets:</span>
+                                <button type="button" class="preset-pill active" data-preset="all">All Students</button>
+                                <button type="button" class="preset-pill" data-preset="toppers">🌟 High Achievers (Grade A / A+)</button>
+                                <button type="button" class="preset-pill" data-preset="low-attendance">⚠️ Low Attendance (&lt;75%)</button>
+                                <button type="button" class="preset-pill" data-preset="fail">❌ Remedial / Fail</button>
+                                <button type="button" class="preset-pill" data-preset="pass">✅ Pass List</button>
                             </div>
 
                             <!-- Students Data Table -->
@@ -899,6 +1166,14 @@
                 <!-- Content injected by JavaScript -->
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-view-print-transcript">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>Print Official Marksheet</span>
+                </button>
                 <button type="button" class="btn btn-secondary" id="btn-close-view-student">Close</button>
             </div>
         </div>
@@ -971,12 +1246,38 @@
         </div>
     </div>
 
+    <!-- OFFICIAL STUDENT MARKSHEET / GRADE CARD MODAL -->
+    <div id="modal-official-marksheet" class="modal-dialog hidden">
+        <div class="modal-card glass-panel marksheet-modal-card">
+            <div class="modal-header marksheet-no-print">
+                <h3>Official Academic Marksheet &amp; Transcript</h3>
+                <div class="marksheet-header-actions" style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-trigger-print-doc">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        <span>Print / Save PDF</span>
+                    </button>
+                    <button class="modal-close-btn" id="btn-close-marksheet-modal">✕</button>
+                </div>
+            </div>
+            <div class="modal-body marksheet-modal-body" id="marksheet-document-container">
+                <!-- Printable official paper rendered dynamically -->
+            </div>
+            <div class="modal-footer marksheet-no-print">
+                <button type="button" class="btn btn-secondary" id="btn-close-marksheet-footer">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===================================================== -->
     <!-- 5. TOAST NOTIFICATIONS CONTAINER                      -->
     <!-- ===================================================== -->
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Application JavaScript Modules -->
-    <script type="module" src="/js/app.js"></script>
+    <script type="module" src="./js/app.js"></script>
 </body>
 </html>

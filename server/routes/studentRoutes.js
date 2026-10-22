@@ -13,6 +13,9 @@ const controller = new StudentController();
 // Only ADMIN can list all students or query filtered tables
 router.get('/', authenticateToken, requireRole('ADMIN'), controller.listStudents);
 
+// Retrieve Dean's List / Top Performers (accessible by both authenticated students and admins)
+router.get('/toppers', authenticateToken, controller.getToppers);
+
 // Both ADMIN and the authenticating STUDENT can retrieve the specific student's record
 router.get('/:studentId', authenticateToken, requireSelfOrAdmin, controller.getStudentById);
 

@@ -35,6 +35,9 @@ export class AdminDashboardManager {
     // Delete target buffer
     #studentToDelete = null;
 
+    // View scorecard buffer
+    #currentViewedStudent = null;
+
     constructor() {
         this.#api = APIClient.getInstance();
         this.#charts = new ChartManager();
@@ -205,6 +208,55 @@ export class AdminDashboardManager {
             this.loadStudentsTable();
         });
 
+        // Quick filter preset pills
+        document.querySelectorAll('.filter-presets-bar .preset-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.filter-presets-bar .preset-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+
+                const preset = pill.dataset.preset;
+
+                // Clear input elements first
+                if (searchInput) searchInput.value = '';
+                if (semSelect) semSelect.value = '';
+                if (genderSelect) genderSelect.value = '';
+                if (gradeSelect) gradeSelect.value = '';
+                if (statusSelect) statusSelect.value = '';
+
+                this.#search = '';
+                this.#semester = '';
+                this.#gender = '';
+                this.#grade = '';
+                this.#status = '';
+
+                if (preset === 'toppers') {
+                    if (gradeSelect) gradeSelect.value = 'A+';
+                    this.#grade = 'A+';
+                    this.#sortBy = 'percentage';
+                    this.#sortOrder = 'DESC';
+                } else if (preset === 'low-attendance') {
+                    this.#sortBy = 'attendance';
+                    this.#sortOrder = 'ASC';
+                } else if (preset === 'fail') {
+                    if (statusSelect) statusSelect.value = 'FAIL';
+                    this.#status = 'FAIL';
+                    this.#sortBy = 'percentage';
+                    this.#sortOrder = 'ASC';
+                } else if (preset === 'pass') {
+                    if (statusSelect) statusSelect.value = 'PASS';
+                    this.#status = 'PASS';
+                    this.#sortBy = 'percentage';
+                    this.#sortOrder = 'DESC';
+                } else {
+                    this.#sortBy = 'student_id';
+                    this.#sortOrder = 'ASC';
+                }
+
+                this.#currentPage = 1;
+                this.loadStudentsTable();
+            });
+        });
+
         document.getElementById('btn-reset-filters')?.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             if (semSelect) semSelect.value = '';
@@ -212,11 +264,16 @@ export class AdminDashboardManager {
             if (gradeSelect) gradeSelect.value = '';
             if (statusSelect) statusSelect.value = '';
 
+            document.querySelectorAll('.filter-presets-bar .preset-pill').forEach(p => p.classList.remove('active'));
+            document.querySelector('.filter-presets-bar .preset-pill[data-preset="all"]')?.classList.add('active');
+
             this.#search = '';
             this.#semester = '';
             this.#gender = '';
             this.#grade = '';
             this.#status = '';
+            this.#sortBy = 'student_id';
+            this.#sortOrder = 'ASC';
             this.#currentPage = 1;
             this.loadStudentsTable();
         });
@@ -418,6 +475,14 @@ export class AdminDashboardManager {
             document.getElementById('modal-view-student')?.classList.add('hidden');
             backdrop?.classList.add('hidden');
         });
+
+        // View Scorecard -> Print Marksheet binding
+        document.getElementById('btn-view-print-transcript')?.addEventListener('click', () => {
+            if (this.#currentViewedStudent) {
+                document.getElementById('modal-view-student')?.classList.add('hidden');
+                this.#openMarksheetForStudent(this.#currentViewedStudent);
+            }
+        });
     }
 
     /**
@@ -589,6 +654,7 @@ export class AdminDashboardManager {
             if (!data || !data.student) return;
 
             const s = data.student;
+            this.#currentViewedStudent = s;
             const body = document.getElementById('view-student-modal-body');
             const modal = document.getElementById('modal-view-student');
             const backdrop = document.getElementById('modal-backdrop');
@@ -596,36 +662,38 @@ export class AdminDashboardManager {
             if (body) {
                 body.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-card);">
-                        <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #00d2ff, #7928ca); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; color: white;">
+                        <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--aditya-orange), var(--aditya-navy)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold; color: white; box-shadow: 0 4px 10px rgba(242,101,34,0.3);">
                             ${(s.name || 'S').charAt(0)}
                         </div>
                         <div>
-                            <h3 style="font-size: 1.2rem; color: #ffffff;">${s.name}</h3>
-                            <span class="font-mono text-cyan" style="font-size: 0.9rem;">${s.student_id}</span> • <span>${s.semester}</span>
+                            <h3 style="font-size: 1.25rem; color: var(--aditya-navy); font-weight: 800;">${s.name}</h3>
+                            <span class="font-mono text-orange" style="font-size: 0.9rem; font-weight: 700;">${s.student_id}</span> • <span>${s.semester}</span> • <span class="badge-tag">CSE</span>
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem;">
-                        <div class="stat-card glass-panel" style="padding: 10px 14px;">
+                        <div class="stat-card glass-panel" style="padding: 12px 14px; background: #ffffff;">
                             <span class="stat-title">Attendance</span>
-                            <div class="stat-val font-mono" style="font-size: 1.4rem;">${s.attendance}%</div>
+                            <div class="stat-val font-mono" style="font-size: 1.4rem; color: ${s.attendance >= 75 ? 'var(--status-pass)' : 'var(--status-fail)'};">${s.attendance}%</div>
+                            <div class="stat-sub">${s.attendance >= 75 ? 'Eligible for Exams' : 'Attendance Shortage'}</div>
                         </div>
-                        <div class="stat-card glass-panel" style="padding: 10px 14px;">
-                            <span class="stat-title">Percentage</span>
-                            <div class="stat-val font-mono text-cyan" style="font-size: 1.4rem;">${s.percentage}%</div>
+                        <div class="stat-card glass-panel" style="padding: 12px 14px; background: #ffffff;">
+                            <span class="stat-title">Overall Percentage</span>
+                            <div class="stat-val font-mono text-orange" style="font-size: 1.4rem;">${s.percentage}%</div>
+                            <div class="stat-sub">Grade ${s.grade} (${s.grade_point} GP)</div>
                         </div>
                     </div>
 
-                    <h4 style="font-size: 0.9rem; color: var(--accent-primary); margin-bottom: 0.8rem;">Academic Subject Scores:</h4>
+                    <h4 style="font-size: 0.9rem; color: var(--aditya-navy); font-weight: 750; margin-bottom: 0.8rem;">Core Subject Breakdown:</h4>
                     <div class="details-table" style="font-size: 0.88rem;">
                         <div class="detail-row"><span class="lbl">Mathematics:</span><span class="val font-mono">${s.mathematics} / 100</span></div>
                         <div class="detail-row"><span class="lbl">Physics:</span><span class="val font-mono">${s.physics} / 100</span></div>
                         <div class="detail-row"><span class="lbl">Python Programming:</span><span class="val font-mono">${s.python_programming} / 100</span></div>
                         <div class="detail-row"><span class="lbl">Data Structures:</span><span class="val font-mono">${s.data_structures} / 100</span></div>
                         <div class="detail-row"><span class="lbl">English:</span><span class="val font-mono">${s.english} / 100</span></div>
-                        <div class="detail-row" style="margin-top: 6px; font-weight: bold;"><span class="lbl">Total Marks:</span><span class="val font-mono text-cyan">${s.total_marks} / 500</span></div>
-                        <div class="detail-row"><span class="lbl">Grade &amp; Grade Point:</span><span class="val font-mono">${s.grade} (${s.grade_point} GP)</span></div>
-                        <div class="detail-row"><span class="lbl">Status:</span><span class="val badge-status-pill ${s.status.toUpperCase() === 'PASS' ? 'pass' : 'fail'}">${s.status}</span></div>
+                        <div class="detail-row" style="margin-top: 6px; font-weight: bold; border-top: 1px solid #cbd5e1; padding-top: 6px;"><span class="lbl">Total Marks:</span><span class="val font-mono text-orange">${s.total_marks} / 500</span></div>
+                        <div class="detail-row"><span class="lbl">Letter Grade:</span><span class="val font-mono"><strong>${s.grade}</strong> (SGPA: ${s.grade_point})</span></div>
+                        <div class="detail-row"><span class="lbl">Academic Status:</span><span class="val badge-status-pill ${s.status.toUpperCase() === 'PASS' ? 'pass' : 'fail'}">${s.status}</span></div>
                     </div>
                 `;
             }
@@ -635,6 +703,130 @@ export class AdminDashboardManager {
         } catch (err) {
             this.#notifications.error(`Failed to load student scorecard: ${err.message}`);
         }
+    }
+
+    #openMarksheetForStudent(student) {
+        const container = document.getElementById('marksheet-document-container');
+        const marksheetModal = document.getElementById('modal-official-marksheet');
+        const backdrop = document.getElementById('modal-backdrop');
+
+        if (!container || !student) return;
+
+        const subjects = [
+            { code: 'CS101', name: 'Mathematics for Computing', score: student.mathematics },
+            { code: 'CS102', name: 'Applied Engineering Physics', score: student.physics },
+            { code: 'CS103', name: 'Python Programming & Problem Solving', score: student.python_programming },
+            { code: 'CS104', name: 'Data Structures & Algorithms', score: student.data_structures },
+            { code: 'CS105', name: 'Professional English & Technical Writing', score: student.english }
+        ];
+
+        const computeSubGrade = (score) => {
+            if (score >= 90) return { grade: 'A+', gp: 10.0, status: 'PASS' };
+            if (score >= 80) return { grade: 'A', gp: 9.0, status: 'PASS' };
+            if (score >= 70) return { grade: 'B', gp: 8.0, status: 'PASS' };
+            if (score >= 60) return { grade: 'C', gp: 7.0, status: 'PASS' };
+            if (score >= 50) return { grade: 'D', gp: 6.0, status: 'PASS' };
+            return { grade: 'F', gp: 0.0, status: 'FAIL' };
+        };
+
+        const rowsHtml = subjects.map(s => {
+            const g = computeSubGrade(s.score);
+            return `
+                <tr>
+                    <td class="font-mono" style="font-weight: 600;">${s.code}</td>
+                    <td>${s.name}</td>
+                    <td style="text-align: center;">100</td>
+                    <td style="text-align: center; font-weight: 700; font-family: var(--font-mono);">${s.score}</td>
+                    <td style="text-align: center; font-weight: 700;">${g.grade}</td>
+                    <td style="text-align: center; font-family: var(--font-mono);">${g.gp.toFixed(1)}</td>
+                    <td style="text-align: center; font-weight: 700; color: ${g.status === 'PASS' ? '#059669' : '#dc2626'}">${g.status}</td>
+                </tr>
+            `;
+        }).join('');
+
+        const division = student.percentage >= 70
+            ? 'First Class with Distinction'
+            : (student.percentage >= 60 ? 'First Class' : 'Second Class');
+
+        const nowFormatted = new Date().toLocaleDateString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+
+        container.innerHTML = `
+            <div id="official-marksheet-printable" class="marksheet-card-paper">
+                <div class="marksheet-header-block">
+                    <img src="./assets/aditya-university-logo.png" alt="Aditya University Logo" class="marksheet-logo-img">
+                    <div class="marksheet-title-main">ADITYA UNIVERSITY</div>
+                    <div class="marksheet-sub-title">DEPARTMENT OF COMPUTER SCIENCE &amp; ENGINEERING</div>
+                    <div style="font-size: 0.96rem; font-weight: 850; color: #003b71; margin-top: 6px; letter-spacing: 0.05em; text-transform: uppercase;">
+                        OFFICIAL SEMESTER GRADE CARD &amp; ACADEMIC TRANSCRIPT
+                    </div>
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+                        Autonomous Institution • Approved by AICTE • NAAC 'A++' Accredited • ADB Road, Surampalem, AP
+                    </div>
+                </div>
+
+                <div class="marksheet-meta-grid">
+                    <div><strong>Student Full Name:</strong> ${student.name}</div>
+                    <div><strong>University Roll No:</strong> <span class="font-mono">${student.student_id}</span></div>
+                    <div><strong>Degree / Program:</strong> Bachelor of Technology (B.Tech)</div>
+                    <div><strong>Department &amp; Branch:</strong> CSE (Computer Science &amp; Engineering)</div>
+                    <div><strong>Academic Semester:</strong> ${student.semester}</div>
+                    <div><strong>Gender:</strong> ${student.gender}</div>
+                    <div><strong>Attendance Tracked:</strong> ${student.attendance}% (${student.attendance >= 75 ? 'Satisfactory' : 'Shortage'})</div>
+                    <div><strong>Issue Date:</strong> ${nowFormatted}</div>
+                </div>
+
+                <table class="marksheet-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 12%;">Course Code</th>
+                            <th>Course Title</th>
+                            <th style="width: 12%; text-align: center;">Max Marks</th>
+                            <th style="width: 14%; text-align: center;">Marks Awarded</th>
+                            <th style="width: 10%; text-align: center;">Grade</th>
+                            <th style="width: 12%; text-align: center;">Grade Point</th>
+                            <th style="width: 10%; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                        <tr style="background: #f1f5f9; font-weight: 800; border-top: 2px solid #003b71;">
+                            <td colspan="2">AGGREGATE SCORE &amp; FINAL RESULT</td>
+                            <td style="text-align: center;">500</td>
+                            <td style="text-align: center; color: #003b71; font-family: var(--font-mono); font-size: 0.95rem;">${student.total_marks}</td>
+                            <td style="text-align: center;">${student.grade}</td>
+                            <td style="text-align: center; font-family: var(--font-mono);">${student.grade_point}</td>
+                            <td style="text-align: center; color: ${student.status === 'PASS' ? '#059669' : '#dc2626'}">${student.status}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #fffaf0; border: 1px dashed #f26522; padding: 10px 16px; border-radius: 6px; font-size: 0.85rem; margin-top: 0.8rem;">
+                    <div><strong>Aggregate Percentage:</strong> <span style="color: #f26522; font-weight: 800; font-family: var(--font-mono);">${student.percentage}%</span></div>
+                    <div><strong>Semester Grade Point Average (SGPA):</strong> <span style="color: #003b71; font-weight: 800; font-family: var(--font-mono);">${student.grade_point} / 10.0</span></div>
+                    <div><strong>Division Awarded:</strong> <strong>${division}</strong></div>
+                </div>
+
+                <div class="marksheet-footer-signatures">
+                    <div style="text-align: center;">
+                        <div style="height: 38px;"></div>
+                        <div style="border-top: 1px solid #334155; width: 160px; padding-top: 4px;">Student Signature</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: cursive; font-size: 1.1rem; color: #003b71; height: 38px; line-height: 38px;">AU Exam Cell</div>
+                        <div style="border-top: 1px solid #334155; width: 180px; padding-top: 4px;">Verified by Section In-charge</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: serif; font-size: 1.1rem; font-weight: bold; color: #003b71; height: 38px; line-height: 38px;">Dr. S. K. Rao</div>
+                        <div style="border-top: 1px solid #334155; width: 200px; padding-top: 4px;">Controller of Examinations</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        marksheetModal?.classList.remove('hidden');
+        backdrop?.classList.remove('hidden');
     }
 
     // ==============================================================================

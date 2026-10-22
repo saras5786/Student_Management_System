@@ -1,46 +1,50 @@
 /* ==============================================================================
-   CENTRAL DESIGN TOKENS & SYSTEM THEME - LIGHT MODE WITH MULTICOLORED BACKGROUND
+   CENTRAL DESIGN TOKENS & SYSTEM THEME
+   ADITYA UNIVERSITY CSE DEPARTMENT (AU-SMS)
+   Light Background with Slow, Smooth Multicolored Changing Background
+   tuned to the official Aditya University Orange & Navy Blue Brand Palette
    File: public/css/style.css
-   Project: Aditya University Student Management System (AU-SMS)
    ============================================================================== */
 
 :root {
-    /* Dynamic Multicolored Theme Hues (Smoothly manipulated by JS Particle/Aura Engine) */
-    --bg-hue: 215;
-    --bg-sat: 85%;
+    /* Aditya University Brand Color Spectrum */
+    --aditya-orange: #f26522;       /* Official Vibrant Aditya Orange */
+    --aditya-orange-hover: #ea580c;
+    --aditya-navy: #003b71;         /* Official Deep Aditya Navy Blue */
+    --aditya-navy-light: #00509d;
+    --aditya-gold: #f59e0b;         /* Emblem Sun Gold */
+    --aditya-sky: #0284c7;          /* Academic Sky Blue */
     
-    /* Light Mode Clean Surface Palette */
-    --bg-primary: #f8fafc;
+    /* Dynamic Brand Hues (Smoothly cycled by JS Engine) */
+    --brand-orange-hue: 24;         /* Cycles between 15° and 35° */
+    --brand-gold-hue: 42;           /* Cycles between 35° and 52° */
+    --brand-blue-hue: 214;          /* Cycles between 200° and 225° */
+    --brand-sky-hue: 198;           /* Cycles between 190° and 208° */
+
+    /* Light Mode Clean Surface Palette with Glass Shimmer */
+    --bg-primary: #fffdf9;
     --bg-secondary: #ffffff;
     --bg-surface: #ffffff;
-    --bg-card: rgba(255, 255, 255, 0.88);
-    --bg-card-hover: rgba(255, 255, 255, 0.98);
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(255, 255, 255, 0.95);
     
-    /* Borders & Glass Dividers */
-    --border-card: rgba(226, 232, 240, 0.85);
-    --border-card-hover: rgba(2, 132, 199, 0.35);
-    --border-focus: #0284c7;
+    /* Borders & Dividers */
+    --border-card: rgba(226, 232, 240, 0.8);
+    --border-card-hover: rgba(242, 101, 34, 0.35);
+    --border-focus: #f26522;
     
-    /* Vibrant Accent Tones */
-    --accent-primary: #0284c7;      /* Ocean Blue */
-    --accent-secondary: #2563eb;    /* Royal Blue */
-    --accent-purple: #7c3aed;       /* Deep Violet */
-    --accent-magenta: #db2777;      /* Vibrant Pink/Rose */
-    --accent-gold: #d97706;         /* University Golden Amber */
-    --accent-emerald: #059669;      /* Fresh Mint/Emerald */
-    
-    /* High-Contrast Crisp Typography Palette */
-    --text-primary: #0f172a;        /* Deep Slate 900 */
+    /* Typography Palette */
+    --text-primary: #0f172a;        /* Deep Slate 900 for ultra-sharp reading */
     --text-secondary: #334155;      /* Slate 700 */
     --text-muted: #64748b;          /* Slate 500 */
     --text-inverse: #ffffff;
 
-    /* Semantic Status Accents */
+    /* Semantic Status */
     --status-pass: #059669;
     --status-pass-bg: rgba(16, 185, 129, 0.12);
     --status-fail: #dc2626;
     --status-fail-bg: rgba(239, 68, 68, 0.12);
-    --status-warn: #d97706;
+    --status-warn: #f59e0b;
     
     /* Layout Dimensions */
     --header-height: 74px;
@@ -51,12 +55,12 @@
     --radius-lg: 18px;
     --radius-xl: 24px;
     
-    /* Soft Light Diffusion Box Shadows */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 6px 24px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-    --shadow-lg: 0 14px 38px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
-    --shadow-glow-cyan: 0 4px 20px rgba(2, 132, 199, 0.28);
-    --shadow-glow-purple: 0 4px 20px rgba(124, 58, 237, 0.28);
+    /* Box Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 6px 24px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 14px 38px -4px rgba(15, 23, 42, 0.11), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+    --shadow-glow-orange: 0 4px 20px rgba(242, 101, 34, 0.3);
+    --shadow-glow-blue: 0 4px 20px rgba(0, 59, 113, 0.25);
     
     /* Typography Font Stacks */
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -84,7 +88,7 @@ html, body {
     overflow-x: hidden;
 }
 
-/* Canvas Particle Layer: Fixed in background with high-visibility colorful dots */
+/* Canvas Particle Layer: Fixed in background */
 #particle-canvas {
     position: fixed;
     top: 0;
@@ -92,26 +96,20 @@ html, body {
     width: 100vw;
     height: 100vh;
     pointer-events: auto;
-    z-index: 1;
+    z-index: 2;
 }
 
-/* Dynamic Multicolored Ambient Aura Background (Smooth cycling mesh) */
-.dynamic-aura {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.85;
-    background: 
-        radial-gradient(circle at 12% 18%, hsla(var(--bg-hue), 85%, 72%, 0.32) 0%, transparent 45%),
-        radial-gradient(circle at 88% 22%, hsla(calc(var(--bg-hue) + 60), 85%, 70%, 0.28) 0%, transparent 45%),
-        radial-gradient(circle at 50% 82%, hsla(calc(var(--bg-hue) + 120), 80%, 72%, 0.26) 0%, transparent 50%),
-        radial-gradient(circle at 82% 88%, hsla(calc(var(--bg-hue) + 180), 85%, 72%, 0.24) 0%, transparent 45%),
-        linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    transition: background 1.2s ease;
+/* ==============================================================================
+   CLEAN LIGHT BACKGROUND & INTERACTIVE CANVAS PARTICLES
+   Dynamic multicolored background removed as requested.
+   Canvas particle physics with official Aditya Orange & Navy dots preserved.
+   ============================================================================== */
+body {
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(circle at 10% 8%, rgba(242, 101, 34, 0.035) 0%, transparent 45%),
+        radial-gradient(circle at 90% 92%, rgba(0, 59, 113, 0.04) 0%, transparent 45%);
+    background-attachment: fixed;
 }
 
 /* App Main Layout */
@@ -124,13 +122,14 @@ html, body {
 }
 
 /* ==============================================================================
-   APPLICATION HEADER (LIGHT THEME)
+   APPLICATION HEADER (ADITYA BRAND STYLING)
+   Clean, crisp university navigation bar
    ============================================================================== */
 .app-header {
     height: var(--header-height);
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-card);
     display: flex;
     align-items: center;
@@ -149,8 +148,8 @@ html, body {
 }
 
 .logo-box {
-    height: 52px;
-    padding: 3px 10px;
+    height: 54px;
+    padding: 2px 8px;
     border-radius: var(--radius-md);
     background: #ffffff;
     border: 1px solid var(--border-card);
@@ -166,7 +165,7 @@ html, body {
 }
 
 .brand-logo {
-    height: 44px;
+    height: 46px;
     width: auto;
     max-width: 140px;
     object-fit: contain;
@@ -180,24 +179,30 @@ html, body {
 .brand-main {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
 }
 
-.univ-name {
-    font-size: 1.2rem;
+/* Distinct Aditya University Brand Typography */
+.brand-aditya {
+    color: var(--aditya-orange);
+    font-weight: 900;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+}
+
+.brand-university {
+    color: var(--aditya-navy);
     font-weight: 850;
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, #92400e 0%, #b45309 40%, #0f172a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
 }
 
 .dept-badge {
-    background: rgba(2, 132, 199, 0.12);
-    color: var(--accent-primary);
-    border: 1px solid rgba(2, 132, 199, 0.3);
+    background: rgba(242, 101, 34, 0.1);
+    color: var(--aditya-orange);
+    border: 1px solid rgba(242, 101, 34, 0.25);
     font-size: 0.72rem;
-    font-weight: 750;
+    font-weight: 800;
     padding: 2px 7px;
     border-radius: 4px;
     letter-spacing: 0.04em;
@@ -230,14 +235,14 @@ html, body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    background: linear-gradient(135deg, var(--aditya-orange), var(--aditya-navy));
     color: #ffffff;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
-    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+    box-shadow: 0 2px 8px rgba(242, 101, 34, 0.35);
 }
 
 .user-details {
@@ -255,7 +260,7 @@ html, body {
     font-size: 0.68rem;
     font-weight: 750;
     letter-spacing: 0.06em;
-    color: var(--accent-primary);
+    color: var(--aditya-orange);
 }
 
 .btn-logout {
@@ -281,7 +286,7 @@ html, body {
 }
 
 /* ==============================================================================
-   COMMON GLASS PANEL & CARD UTILITIES (LIGHT THEME)
+   COMMON GLASS PANEL & CARD UTILITIES
    ============================================================================== */
 .glass-panel {
     background: var(--bg-card);
@@ -294,12 +299,12 @@ html, body {
 }
 
 .glass-panel:hover {
-    border-color: rgba(2, 132, 199, 0.25);
+    border-color: rgba(242, 101, 34, 0.28);
     box-shadow: var(--shadow-lg);
 }
 
 /* ==============================================================================
-   BUTTON MICRO-INTERACTIONS & STYLES
+   BUTTON STYLES & MICRO-INTERACTIONS
    ============================================================================== */
 .btn {
     display: inline-flex;
@@ -323,25 +328,27 @@ html, body {
     transform: scale(0.98);
 }
 
+/* Primary Button: Aditya Orange Gradient */
 .btn-primary {
-    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    background: linear-gradient(135deg, var(--aditya-orange) 0%, #ea580c 100%);
     color: #ffffff;
-    box-shadow: var(--shadow-glow-cyan);
+    box-shadow: var(--shadow-glow-orange);
 }
 
 .btn-primary:hover {
-    box-shadow: 0 6px 24px rgba(2, 132, 199, 0.45);
+    box-shadow: 0 6px 24px rgba(242, 101, 34, 0.45);
     transform: translateY(-1px);
 }
 
+/* Accent Button: Aditya Navy Blue Gradient */
 .btn-accent {
-    background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+    background: linear-gradient(135deg, var(--aditya-navy) 0%, #1e3a8a 100%);
     color: #ffffff;
-    box-shadow: var(--shadow-glow-purple);
+    box-shadow: var(--shadow-glow-blue);
 }
 
 .btn-accent:hover {
-    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.45);
+    box-shadow: 0 6px 24px rgba(0, 59, 113, 0.4);
     transform: translateY(-1px);
 }
 
@@ -394,7 +401,7 @@ html, body {
 }
 
 /* ==============================================================================
-   FORM CONTROLS & INPUTS (LIGHT THEME)
+   FORM CONTROLS & INPUTS
    ============================================================================== */
 .form-group {
     display: flex;
@@ -433,8 +440,8 @@ select {
 }
 
 input:focus, select:focus {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.16);
+    border-color: var(--aditya-orange);
+    box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.18);
 }
 
 input::placeholder {
@@ -470,7 +477,7 @@ input::placeholder {
 .app-footer {
     height: 50px;
     border-top: 1px solid var(--border-card);
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
@@ -490,17 +497,43 @@ input::placeholder {
 }
 
 .tech-stack-tag {
-    color: var(--accent-primary);
+    color: var(--aditya-orange);
     font-family: var(--font-mono);
     font-size: 0.76rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Utilities */
 .hidden { display: none !important; }
 .font-mono { font-family: var(--font-mono); }
-.text-cyan { color: var(--accent-primary); }
+.text-cyan { color: var(--aditya-sky); }
+.text-orange { color: var(--aditya-orange); }
+.text-navy { color: var(--aditya-navy); }
 .text-green { color: var(--status-pass); }
 .text-red { color: var(--status-fail); }
 .mt-3 { margin-top: 1rem; }
 .mt-4 { margin-top: 1.5rem; }
+
+/* ==============================================================================
+   PRINT STYLESHEET FOR OFFICIAL GRADE CARDS / MARKSHEETS
+   ============================================================================== */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #official-marksheet-printable, #official-marksheet-printable * {
+        visibility: visible;
+    }
+    #official-marksheet-printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 20mm;
+    }
+    .modal-backdrop, #particle-canvas, .dynamic-aura, .app-header, .app-footer, .modal-footer {
+        display: none !important;
+    }
+}

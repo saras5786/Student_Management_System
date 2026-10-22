@@ -1,14 +1,12 @@
 // ==============================================================================
-// OOP CONCEPT: ENCAPSULATION & COMPOSITION (LIGHT THEME OPTIMIZED)
+// OOP CONCEPT: ENCAPSULATION & COMPOSITION (ADITYA BRAND TUNED)
 // File: public/js/particles.js
 // 
-// Particle state and physics behavior are contained entirely inside Particle
-// and ParticleAnimation classes. High-performance 60FPS Canvas rendering with
-// spatial proximity connections and mouse-repulsion physics on light canvas.
+// Particle physics on light canvas utilizing the Aditya University brand palette:
+// Official Aditya Orange, Deep University Navy, Sun Gold, and Academic Sky Blue.
 // ==============================================================================
 
 class Particle {
-    // OOP CONCEPT: ENCAPSULATION (PRIVATE FIELDS)
     #x;
     #y;
     #vx;
@@ -16,36 +14,40 @@ class Particle {
     #radius;
     #baseRadius;
     #alpha;
-    #colorOffset;
+    #colorType; // 0 = Official Aditya Orange (#f26522), 1 = Official Aditya Navy Blue (#003b71)
+
+    #pulse;
 
     constructor(x, y) {
         this.#x = x;
         this.#y = y;
-        // Velocity between -0.4 and +0.4 pixels/frame for graceful subtle drift
-        this.#vx = (Math.random() - 0.5) * 0.75;
-        this.#vy = (Math.random() - 0.5) * 0.75;
-        this.#baseRadius = Math.random() * 2.0 + 1.4;
+        // Ultra-slow, serene, graceful drift
+        this.#vx = (Math.random() - 0.5) * 0.22;
+        this.#vy = (Math.random() - 0.5) * 0.22;
+        this.#baseRadius = Math.random() * 2.0 + 1.6;
         this.#radius = this.#baseRadius;
-        this.#alpha = Math.random() * 0.4 + 0.5;
-        this.#colorOffset = Math.random() * 60 - 30; // subtle color variation between particles
+        this.#alpha = Math.random() * 0.3 + 0.5;
+        // Strictly Aditya University colors: Orange (0) and Navy Blue (1) only
+        this.#colorType = Math.random() < 0.5 ? 0 : 1;
+        this.#pulse = Math.random() * Math.PI * 2;
     }
 
     get x() { return this.#x; }
     get y() { return this.#y; }
     get radius() { return this.#radius; }
     get alpha() { return this.#alpha; }
+    get colorType() { return this.#colorType; }
 
-    /**
-     * Update particle position and bounce off canvas boundaries.
-     */
-    update(width, height, mouseX, mouseY, mouseRadius = 140) {
+    update(width, height, mouseX, mouseY, mouseRadius = 130) {
         this.#x += this.#vx;
         this.#y += this.#vy;
+        this.#pulse += 0.015;
 
         if (this.#x < 0 || this.#x > width) this.#vx = -this.#vx;
         if (this.#y < 0 || this.#y > height) this.#vy = -this.#vy;
 
-        // Gentle mouse repulsion
+        const breathing = Math.sin(this.#pulse) * 0.4;
+
         if (mouseX !== null && mouseY !== null) {
             const dx = this.#x - mouseX;
             const dy = this.#y - mouseY;
@@ -54,32 +56,41 @@ class Particle {
             if (dist < mouseRadius) {
                 const force = (mouseRadius - dist) / mouseRadius;
                 const angle = Math.atan2(dy, dx);
-                this.#x += Math.cos(angle) * force * 2.6;
-                this.#y += Math.sin(angle) * force * 2.6;
-                this.#radius = this.#baseRadius + force * 2.5;
+                this.#x += Math.cos(angle) * force * 1.2;
+                this.#y += Math.sin(angle) * force * 1.2;
+                this.#radius = this.#baseRadius + breathing + force * 1.6;
             } else {
-                this.#radius = this.#baseRadius;
+                this.#radius = this.#baseRadius + breathing;
             }
         } else {
-            this.#radius = this.#baseRadius;
+            this.#radius = this.#baseRadius + breathing;
         }
     }
 
-    draw(ctx, hue) {
+    draw(ctx, brandOrangeHue, brandBlueHue) {
         ctx.save();
         ctx.beginPath();
         ctx.arc(this.#x, this.#y, this.#radius, 0, Math.PI * 2);
-        // Rich vibrant saturation and 45% lightness for maximum crispness on light background
-        ctx.fillStyle = `hsla(${hue + this.#colorOffset}, 85%, 45%, ${this.#alpha})`;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = `hsla(${hue + this.#colorOffset}, 85%, 50%, 0.4)`;
+
+        // Official Aditya University Palette ONLY
+        let fillStyle = '';
+        if (this.#colorType === 0) {
+            // Official Aditya Orange (#f26522)
+            fillStyle = `hsla(${brandOrangeHue}, 94%, 54%, ${this.#alpha})`;
+        } else {
+            // Official Aditya Deep Navy Blue (#003b71)
+            fillStyle = `hsla(${brandBlueHue}, 96%, 30%, ${this.#alpha})`;
+        }
+
+        ctx.fillStyle = fillStyle;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = fillStyle;
         ctx.fill();
         ctx.restore();
     }
 }
 
 export class ParticleAnimation {
-    // OOP CONCEPT: ENCAPSULATION
     #canvas;
     #ctx;
     #particles = [];
@@ -89,9 +100,10 @@ export class ParticleAnimation {
     #mouseY = null;
     #width = 0;
     #height = 0;
-    #hue = 215;
+    #brandOrangeHue = 24;
+    #brandBlueHue = 214;
     #isRunning = false;
-    #connectionMaxDist = 115;
+    #connectionMaxDist = 110;
 
     constructor(canvasElement) {
         this.#canvas = canvasElement;
@@ -109,8 +121,9 @@ export class ParticleAnimation {
 
     #spawnParticles() {
         this.#particles = [];
-        const density = Math.floor((this.#width * this.#height) / 14000);
-        const count = Math.min(Math.max(density, 40), 110);
+        // Reduced density for a spacious, clean, and elegant visual aesthetic
+        const density = Math.floor((this.#width * this.#height) / 40000);
+        const count = Math.min(Math.max(density, 16), 36);
 
         for (let i = 0; i < count; i++) {
             const x = Math.random() * this.#width;
@@ -121,16 +134,13 @@ export class ParticleAnimation {
 
     #bindEvents() {
         window.addEventListener('resize', () => this.resize());
-
         window.addEventListener('mousemove', (e) => {
             this.handleMouseMove(e.clientX, e.clientY);
         });
-
         window.addEventListener('mouseleave', () => {
             this.#mouseX = null;
             this.#mouseY = null;
         });
-
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 this.pause();
@@ -149,14 +159,14 @@ export class ParticleAnimation {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         this.#width = window.innerWidth;
         this.#height = window.innerHeight;
-
         this.#canvas.width = this.#width * dpr;
         this.#canvas.height = this.#height * dpr;
         this.#ctx.scale(dpr, dpr);
     }
 
-    setHue(hue) {
-        this.#hue = hue;
+    setBrandHues(orangeHue, blueHue) {
+        this.#brandOrangeHue = orangeHue;
+        this.#brandBlueHue = blueHue;
     }
 
     #loop = (currentTime = performance.now()) => {
@@ -180,7 +190,21 @@ export class ParticleAnimation {
     draw() {
         this.#ctx.clearRect(0, 0, this.#width, this.#height);
 
-        // Connecting lines with subtle color
+        // Interactive cursor radiant ambient halo in Aditya colors
+        if (this.#mouseX !== null && this.#mouseY !== null) {
+            const cursorGlow = this.#ctx.createRadialGradient(
+                this.#mouseX, this.#mouseY, 0,
+                this.#mouseX, this.#mouseY, 170
+            );
+            cursorGlow.addColorStop(0, `hsla(${this.#brandOrangeHue}, 96%, 56%, 0.16)`);
+            cursorGlow.addColorStop(0.55, `hsla(${this.#brandBlueHue}, 96%, 32%, 0.09)`);
+            cursorGlow.addColorStop(1, 'transparent');
+            this.#ctx.fillStyle = cursorGlow;
+            this.#ctx.beginPath();
+            this.#ctx.arc(this.#mouseX, this.#mouseY, 170, 0, Math.PI * 2);
+            this.#ctx.fill();
+        }
+
         const count = this.#particles.length;
         for (let i = 0; i < count; i++) {
             const p1 = this.#particles[i];
@@ -191,16 +215,23 @@ export class ParticleAnimation {
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < this.#connectionMaxDist) {
-                    const alpha = (1 - dist / this.#connectionMaxDist) * 0.18;
+                    const alpha = (1 - dist / this.#connectionMaxDist) * 0.12;
                     this.#ctx.beginPath();
                     this.#ctx.moveTo(p1.x, p1.y);
                     this.#ctx.lineTo(p2.x, p2.y);
-                    this.#ctx.strokeStyle = `hsla(${this.#hue}, 80%, 46%, ${alpha})`;
-                    this.#ctx.lineWidth = 0.9;
+                    // Interconnecting Aditya Orange and Aditya Navy lines
+                    if (p1.colorType === 0 && p2.colorType === 0) {
+                        this.#ctx.strokeStyle = `hsla(${this.#brandOrangeHue}, 94%, 52%, ${alpha})`;
+                    } else if (p1.colorType === 1 && p2.colorType === 1) {
+                        this.#ctx.strokeStyle = `hsla(${this.#brandBlueHue}, 96%, 30%, ${alpha})`;
+                    } else {
+                        this.#ctx.strokeStyle = `hsla(${this.#brandOrangeHue}, 90%, 50%, ${alpha * 0.85})`;
+                    }
+                    this.#ctx.lineWidth = 0.7;
                     this.#ctx.stroke();
                 }
             }
-            p1.draw(this.#ctx, this.#hue);
+            p1.draw(this.#ctx, this.#brandOrangeHue, this.#brandBlueHue);
         }
     }
 

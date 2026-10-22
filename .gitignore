@@ -1,0 +1,16 @@
+node_modules/
+database/*.db-journal
+database/*.db-wal
+database/*.db-shm
+*.obj
+*.exe
+*.o
+*.out
+*.log
+*.pdb
+*.ilk
+*.gch
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

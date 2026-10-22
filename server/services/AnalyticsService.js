@@ -49,7 +49,8 @@ export class AnalyticsService {
             },
             gradeDistribution: distributions.grades,
             semesterDistribution: distributions.semesters,
-            attendanceDistribution: distributions.attendanceRanges
+            attendanceDistribution: distributions.attendanceRanges,
+            topPerformers: this.#studentRepo.getTopPerformers(10)
         };
     }
 }

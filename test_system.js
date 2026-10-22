@@ -205,6 +205,16 @@ async function runTests() {
         assert(exportCsvText.includes('25b11cs841'), 'CSV Export contains future student 25b11cs841');
         const line001 = exportCsvText.split('\n').find(l => l.includes('25b11cs001'));
         assert(line001 && line001.includes('97'), 'CSV Export contains updated Attendance: 97 for 25b11cs001');
+        // TEST 13: Dean's List / Toppers Leaderboard API Verification
+        console.log('\n🔹 Test 13: Dean\'s List / Leaderboard Verification...');
+        const toppersRes = await fetch(`${baseUrl}/students/toppers?limit=10`, {
+            headers: { 'Authorization': `Bearer ${studentToken}` }
+        });
+        const toppersData = await toppersRes.json();
+        assert(toppersRes.status === 200, 'Student can access Dean\'s List toppers');
+        assert(toppersData.success === true, 'Toppers response success = true');
+        assert(Array.isArray(toppersData.toppers) && toppersData.toppers.length === 10, 'Returns top 10 CSE department performers');
+        assert(toppersData.toppers[0].percentage >= toppersData.toppers[1].percentage, 'Rank 1 percentage >= Rank 2 percentage');
 
         console.log('\n========================================================');
         console.log(`VERIFICATION SUMMARY: ${passed} PASSED, ${failed} FAILED`);

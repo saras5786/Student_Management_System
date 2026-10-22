@@ -21,6 +21,8 @@ export class StudentDashboardManager {
         this.#charts = new ChartManager();
         this.#notifications = NotificationManager.getInstance();
         this.#bindNavigation();
+        this.#bindSimulator();
+        this.#bindMarksheetModal();
     }
 
     #bindNavigation() {
@@ -116,6 +118,12 @@ export class StudentDashboardManager {
 
         // 6. Performance Charts
         this.#renderPerformanceCharts(student);
+
+        // 7. Initialize What-If Simulator with actual marks
+        this.#initSimulator(student);
+
+        // 8. Load Dean's List / Toppers Leaderboard
+        this.loadToppersLeaderboard();
     }
 
     #renderSubjectBars(student) {
@@ -261,4 +269,334 @@ export class StudentDashboardManager {
         this.#charts.renderStudentBar('chart-student-bar', student);
         this.#charts.renderStudentRadar('chart-student-radar-full', student);
     }
+
+    // ==============================================================================
+    // 7. WHAT-IF ACADEMIC SIMULATOR
+    // ==============================================================================
+    #bindSimulator() {
+        const subjects = ['math', 'physics', 'python', 'ds', 'english'];
+
+        subjects.forEach(sub => {
+            const rangeEl = document.getElementById(`sim-range-${sub}`);
+            const valEl = document.getElementById(`sim-val-${sub}`);
+
+            rangeEl?.addEventListener('input', () => {
+                if (valEl) valEl.value = rangeEl.value;
+                this.#updateSimulation();
+            });
+
+            valEl?.addEventListener('input', () => {
+                let num = parseFloat(valEl.value) || 0;
+                if (num < 0) num = 0;
+                if (num > 100) num = 100;
+                if (rangeEl) rangeEl.value = num;
+                this.#updateSimulation();
+            });
+        });
+
+        // Preset buttons
+        document.getElementById('btn-sim-reset')?.addEventListener('click', () => {
+            if (this.#currentStudent) this.#initSimulator(this.#currentStudent);
+        });
+
+        document.getElementById('btn-sim-target-a-plus')?.addEventListener('click', () => {
+            this.#setSimValues(90, 90, 90, 90, 90);
+        });
+
+        document.getElementById('btn-sim-target-a')?.addEventListener('click', () => {
+            this.#setSimValues(80, 80, 80, 80, 80);
+        });
+    }
+
+    #setSimValues(m, p, py, ds, eng) {
+        const setVal = (sub, val) => {
+            const rangeEl = document.getElementById(`sim-range-${sub}`);
+            const valEl = document.getElementById(`sim-val-${sub}`);
+            if (rangeEl) rangeEl.value = val;
+            if (valEl) valEl.value = val;
+        };
+
+        setVal('math', m);
+        setVal('physics', p);
+        setVal('python', py);
+        setVal('ds', ds);
+        setVal('english', eng);
+
+        this.#updateSimulation();
+    }
+
+    #initSimulator(student) {
+        this.#setSimValues(
+            student.mathematics,
+            student.physics,
+            student.python_programming,
+            student.data_structures,
+            student.english
+        );
+    }
+
+    #updateSimulation() {
+        if (!this.#currentStudent) return;
+
+        const getVal = (sub) => parseFloat(document.getElementById(`sim-val-${sub}`)?.value) || 0;
+        const m = getVal('math');
+        const p = getVal('physics');
+        const py = getVal('python');
+        const ds = getVal('ds');
+        const eng = getVal('english');
+
+        const total = Math.round((m + p + py + ds + eng) * 100) / 100;
+        const percentage = Math.round((total / 5) * 100) / 100;
+
+        let grade = 'F';
+        let gradePoint = 0.0;
+        if (percentage >= 90) { grade = 'A+'; gradePoint = 10.0; }
+        else if (percentage >= 80) { grade = 'A'; gradePoint = 9.0; }
+        else if (percentage >= 70) { grade = 'B'; gradePoint = 8.0; }
+        else if (percentage >= 60) { grade = 'C'; gradePoint = 7.0; }
+        else if (percentage >= 50) { grade = 'D'; gradePoint = 6.0; }
+        else { grade = 'F'; gradePoint = 0.0; }
+
+        const isPass = m >= 50 && p >= 50 && py >= 50 && ds >= 50 && eng >= 50;
+        const status = isPass ? 'PASS' : 'FAIL';
+
+        // Update DOM elements
+        const totalEl = document.getElementById('sim-stat-total');
+        const pctEl = document.getElementById('sim-stat-pct');
+        const gradeEl = document.getElementById('sim-stat-grade');
+        const gpaEl = document.getElementById('sim-stat-gpa');
+        const statusEl = document.getElementById('sim-stat-status');
+        const totalDiffEl = document.getElementById('sim-stat-total-diff');
+        const pctDiffEl = document.getElementById('sim-stat-pct-diff');
+        const remarksEl = document.getElementById('sim-stat-remarks');
+
+        if (totalEl) totalEl.textContent = `${total} / 500`;
+        if (pctEl) pctEl.textContent = `${percentage.toFixed(2)}%`;
+        if (gradeEl) gradeEl.textContent = grade;
+        if (gpaEl) gpaEl.textContent = `Grade Point: ${gradePoint.toFixed(1)} / 10`;
+
+        if (statusEl) {
+            statusEl.textContent = status;
+            statusEl.className = `stat-val font-mono ${isPass ? 'text-green' : 'text-red'}`;
+        }
+
+        const totalDelta = Math.round((total - this.#currentStudent.total_marks) * 100) / 100;
+        const pctDelta = Math.round((percentage - this.#currentStudent.percentage) * 100) / 100;
+
+        if (totalDiffEl) {
+            totalDiffEl.textContent = `Delta: ${totalDelta >= 0 ? '+' : ''}${totalDelta} marks`;
+            totalDiffEl.style.color = totalDelta >= 0 ? 'var(--status-pass)' : 'var(--status-fail)';
+        }
+
+        if (pctDiffEl) {
+            pctDiffEl.textContent = `Delta: ${pctDelta >= 0 ? '+' : ''}${pctDelta.toFixed(2)}%`;
+            pctDiffEl.style.color = pctDelta >= 0 ? 'var(--status-pass)' : 'var(--status-fail)';
+        }
+
+        if (remarksEl) {
+            if (percentage >= 90) remarksEl.textContent = '🌟 Potential Gold Medalist / High Distinction!';
+            else if (percentage >= 80) remarksEl.textContent = '⭐ Dean’s Honor List Qualified';
+            else if (isPass) remarksEl.textContent = '✓ Clear of prerequisites & standing';
+            else remarksEl.textContent = '⚠ Subject score below minimum passing threshold (50)';
+        }
+    }
+
+    // ==============================================================================
+    // 8. DEAN'S LIST / TOPPERS LEADERBOARD
+    // ==============================================================================
+    async loadToppersLeaderboard() {
+        const container = document.getElementById('toppers-container');
+        if (!container) return;
+
+        try {
+            const data = await this.#api.get('/students/toppers?limit=10');
+            if (!data || !data.toppers || data.toppers.length === 0) {
+                container.innerHTML = `<p style="padding: 1rem; color: var(--text-muted);">No leaderboard records available.</p>`;
+                return;
+            }
+
+            container.innerHTML = data.toppers.map((t, idx) => {
+                let medal = `#${idx + 1}`;
+                let rankClass = '';
+                if (idx === 0) { medal = '🥇'; rankClass = 'rank-1'; }
+                else if (idx === 1) { medal = '🥈'; rankClass = 'rank-2'; }
+                else if (idx === 2) { medal = '🥉'; rankClass = 'rank-3'; }
+
+                return `
+                    <div class="topper-card animate-card-${(idx % 4) + 1}">
+                        <div class="topper-rank-badge ${rankClass}">
+                            <span>${medal}</span>
+                        </div>
+                        <div class="topper-details">
+                            <span class="topper-name" title="${t.name}">${t.name}</span>
+                            <span class="topper-id font-mono">${t.student_id} • ${t.semester}</span>
+                            <span style="font-size: 0.76rem; color: var(--text-muted);">Attendance: ${t.attendance}%</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="topper-score">${t.percentage}%</div>
+                            <span class="badge-status-pill pass" style="font-size: 0.72rem; padding: 2px 6px;">${t.grade}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('Failed to load toppers leaderboard:', err);
+        }
+    }
+
+    // ==============================================================================
+    // 9. OFFICIAL MARKSHEET / GRADE CARD MODAL & PRINTING
+    // ==============================================================================
+    #bindMarksheetModal() {
+        // Button in Welcome Card
+        document.getElementById('btn-print-official-marksheet')?.addEventListener('click', () => {
+            if (this.#currentStudent) this.openOfficialMarksheet(this.#currentStudent);
+        });
+
+        // Close handlers
+        const modal = document.getElementById('modal-official-marksheet');
+        const backdrop = document.getElementById('modal-backdrop');
+        const closeModal = () => {
+            modal?.classList.add('hidden');
+            backdrop?.classList.add('hidden');
+        };
+
+        document.getElementById('btn-close-marksheet-modal')?.addEventListener('click', closeModal);
+        document.getElementById('btn-close-marksheet-footer')?.addEventListener('click', closeModal);
+
+        // Print button inside modal
+        document.getElementById('btn-trigger-print-doc')?.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Leaderboard refresh button
+        document.getElementById('btn-refresh-toppers')?.addEventListener('click', () => {
+            this.loadToppersLeaderboard();
+        });
+    }
+
+    openOfficialMarksheet(student) {
+        const container = document.getElementById('marksheet-document-container');
+        const modal = document.getElementById('modal-official-marksheet');
+        const backdrop = document.getElementById('modal-backdrop');
+
+        if (!container || !student) return;
+
+        const subjects = [
+            { code: 'CS101', name: 'Mathematics for Computing', score: student.mathematics },
+            { code: 'CS102', name: 'Applied Engineering Physics', score: student.physics },
+            { code: 'CS103', name: 'Python Programming & Problem Solving', score: student.python_programming },
+            { code: 'CS104', name: 'Data Structures & Algorithms', score: student.data_structures },
+            { code: 'CS105', name: 'Professional English & Technical Writing', score: student.english }
+        ];
+
+        const computeSubGrade = (score) => {
+            if (score >= 90) return { grade: 'A+', gp: 10.0, status: 'PASS' };
+            if (score >= 80) return { grade: 'A', gp: 9.0, status: 'PASS' };
+            if (score >= 70) return { grade: 'B', gp: 8.0, status: 'PASS' };
+            if (score >= 60) return { grade: 'C', gp: 7.0, status: 'PASS' };
+            if (score >= 50) return { grade: 'D', gp: 6.0, status: 'PASS' };
+            return { grade: 'F', gp: 0.0, status: 'FAIL' };
+        };
+
+        const rowsHtml = subjects.map(s => {
+            const g = computeSubGrade(s.score);
+            return `
+                <tr>
+                    <td class="font-mono" style="font-weight: 600;">${s.code}</td>
+                    <td>${s.name}</td>
+                    <td style="text-align: center;">100</td>
+                    <td style="text-align: center; font-weight: 700; font-family: var(--font-mono);">${s.score}</td>
+                    <td style="text-align: center; font-weight: 700;">${g.grade}</td>
+                    <td style="text-align: center; font-family: var(--font-mono);">${g.gp.toFixed(1)}</td>
+                    <td style="text-align: center; font-weight: 700; color: ${g.status === 'PASS' ? '#059669' : '#dc2626'}">${g.status}</td>
+                </tr>
+            `;
+        }).join('');
+
+        const division = student.percentage >= 70
+            ? 'First Class with Distinction'
+            : (student.percentage >= 60 ? 'First Class' : 'Second Class');
+
+        const nowFormatted = new Date().toLocaleDateString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+
+        container.innerHTML = `
+            <div id="official-marksheet-printable" class="marksheet-card-paper">
+                <div class="marksheet-header-block">
+                    <img src="./assets/aditya-university-logo.png" alt="Aditya University Logo" class="marksheet-logo-img">
+                    <div class="marksheet-title-main">ADITYA UNIVERSITY</div>
+                    <div class="marksheet-sub-title">DEPARTMENT OF COMPUTER SCIENCE &amp; ENGINEERING</div>
+                    <div style="font-size: 0.96rem; font-weight: 850; color: #003b71; margin-top: 6px; letter-spacing: 0.05em; text-transform: uppercase;">
+                        OFFICIAL SEMESTER GRADE CARD &amp; ACADEMIC TRANSCRIPT
+                    </div>
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+                        Autonomous Institution • Approved by AICTE • NAAC 'A++' Accredited • ADB Road, Surampalem, AP
+                    </div>
+                </div>
+
+                <div class="marksheet-meta-grid">
+                    <div><strong>Student Full Name:</strong> ${student.name}</div>
+                    <div><strong>University Roll No:</strong> <span class="font-mono">${student.student_id}</span></div>
+                    <div><strong>Degree / Program:</strong> Bachelor of Technology (B.Tech)</div>
+                    <div><strong>Department &amp; Branch:</strong> CSE (Computer Science &amp; Engineering)</div>
+                    <div><strong>Academic Semester:</strong> ${student.semester}</div>
+                    <div><strong>Gender:</strong> ${student.gender}</div>
+                    <div><strong>Attendance Tracked:</strong> ${student.attendance}% (${student.attendance >= 75 ? 'Satisfactory' : 'Shortage'})</div>
+                    <div><strong>Issue Date:</strong> ${nowFormatted}</div>
+                </div>
+
+                <table class="marksheet-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 12%;">Course Code</th>
+                            <th>Course Title</th>
+                            <th style="width: 12%; text-align: center;">Max Marks</th>
+                            <th style="width: 14%; text-align: center;">Marks Awarded</th>
+                            <th style="width: 10%; text-align: center;">Grade</th>
+                            <th style="width: 12%; text-align: center;">Grade Point</th>
+                            <th style="width: 10%; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                        <tr style="background: #f1f5f9; font-weight: 800; border-top: 2px solid #003b71;">
+                            <td colspan="2">AGGREGATE SCORE &amp; FINAL RESULT</td>
+                            <td style="text-align: center;">500</td>
+                            <td style="text-align: center; color: #003b71; font-family: var(--font-mono); font-size: 0.95rem;">${student.total_marks}</td>
+                            <td style="text-align: center;">${student.grade}</td>
+                            <td style="text-align: center; font-family: var(--font-mono);">${student.grade_point}</td>
+                            <td style="text-align: center; color: ${student.status === 'PASS' ? '#059669' : '#dc2626'}">${student.status}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #fffaf0; border: 1px dashed #f26522; padding: 10px 16px; border-radius: 6px; font-size: 0.85rem; margin-top: 0.8rem;">
+                    <div><strong>Aggregate Percentage:</strong> <span style="color: #f26522; font-weight: 800; font-family: var(--font-mono);">${student.percentage}%</span></div>
+                    <div><strong>Semester Grade Point Average (SGPA):</strong> <span style="color: #003b71; font-weight: 800; font-family: var(--font-mono);">${student.grade_point} / 10.0</span></div>
+                    <div><strong>Division Awarded:</strong> <strong>${division}</strong></div>
+                </div>
+
+                <div class="marksheet-footer-signatures">
+                    <div style="text-align: center;">
+                        <div style="height: 38px;"></div>
+                        <div style="border-top: 1px solid #334155; width: 160px; padding-top: 4px;">Student Signature</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: cursive; font-size: 1.1rem; color: #003b71; height: 38px; line-height: 38px;">AU Exam Cell</div>
+                        <div style="border-top: 1px solid #334155; width: 180px; padding-top: 4px;">Verified by Section In-charge</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: serif; font-size: 1.1rem; font-weight: bold; color: #003b71; height: 38px; line-height: 38px;">Dr. S. K. Rao</div>
+                        <div style="border-top: 1px solid #334155; width: 200px; padding-top: 4px;">Controller of Examinations</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        modal?.classList.remove('hidden');
+        backdrop?.classList.remove('hidden');
+    }
 }
+

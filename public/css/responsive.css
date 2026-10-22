@@ -64,6 +64,19 @@
         --header-height: 64px;
     }
 
+    .floating-flank-logo {
+        display: none !important;
+    }
+
+    .moving-logo-wrapper {
+        width: 120px;
+        height: 65px;
+    }
+
+    .moving-aditya-logo {
+        height: 52px;
+    }
+
     .univ-name {
         font-size: 1rem;
     }

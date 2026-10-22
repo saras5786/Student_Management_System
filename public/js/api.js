@@ -1,20 +1,39 @@
 // ==============================================================================
-// OOP CONCEPT: ENCAPSULATION & API CLIENT ABSTRACTION
+// OOP CONCEPT: ENCAPSULATION & API CLIENT ABSTRACTION (HYBRID CLIENT)
 // File: public/js/api.js
 // 
 // Encapsulates HTTP communication with the Node.js backend.
-// Token headers, JSON payloads, and network error reporting are managed here.
+// In GitHub Pages or offline demo environments, seamlessly falls back to
+// the MockBackend client-side engine with persistent localStorage state.
 // ==============================================================================
+
+import { MockBackend } from './mockBackend.js';
 
 export class APIClient {
     #token = null;
     static #instance = null;
+    #mockBackend = null;
+    #isStaticHost = false;
 
     constructor() {
         if (APIClient.#instance) {
             return APIClient.#instance;
         }
         this.#token = localStorage.getItem('au_sms_token') || null;
+        this.#mockBackend = MockBackend.getInstance();
+
+        // Check if running in a static hosting environment like GitHub Pages
+        const host = window.location.hostname || '';
+        this.#isStaticHost = (
+            host.endsWith('github.io') ||
+            window.location.protocol === 'file:' ||
+            localStorage.getItem('au_sms_force_mock') === 'true'
+        );
+
+        if (this.#isStaticHost) {
+            console.log('%c[AU-SMS] Running in Standalone / GitHub Pages Mode with Client-Side Engine', 'color: #ff5722; font-weight: bold;');
+        }
+
         APIClient.#instance = this;
     }
 
@@ -42,7 +61,19 @@ export class APIClient {
         this.setToken(null);
     }
 
+    isStaticMode() {
+        return this.#isStaticHost;
+    }
+
     async request(endpoint, options = {}) {
+        const method = (options.method || 'GET').toUpperCase();
+
+        // 1. If explicitly on GitHub Pages or file://, route directly to MockBackend
+        if (this.#isStaticHost) {
+            return await this.#mockBackend.handleRequest(method, endpoint, options);
+        }
+
+        // 2. Otherwise attempt HTTP fetch to the Node.js Express backend
         const url = endpoint.startsWith('http') ? endpoint : `/api${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
         
         const headers = {
@@ -72,6 +103,13 @@ export class APIClient {
                 return blob;
             }
 
+            // If 404 or server unavailable, fall back to mock engine
+            if (response.status === 404) {
+                console.warn(`[APIClient] Server 404 on ${url}, falling back to client-side engine.`);
+                this.#isStaticHost = true;
+                return await this.#mockBackend.handleRequest(method, endpoint, options);
+            }
+
             const data = await response.json();
 
             if (!response.ok) {
@@ -83,7 +121,14 @@ export class APIClient {
 
             return data;
         } catch (err) {
-            console.error(`[APIClient Error] ${options.method || 'GET'} ${url}:`, err);
+            // Network failure (server not started or unreachable) -> Fall back to MockBackend
+            if (err.name === 'TypeError' || err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+                console.warn(`[APIClient] Network request failed. Seamlessly falling back to client-side engine.`);
+                this.#isStaticHost = true;
+                return await this.#mockBackend.handleRequest(method, endpoint, options);
+            }
+
+            console.error(`[APIClient Error] ${method} ${url}:`, err);
             throw err;
         }
     }

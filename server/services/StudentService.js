@@ -256,4 +256,14 @@ export class StudentService {
 
         return success;
     }
+
+    /**
+     * Retrieve top academic performers for Dean's List / Leaderboard.
+     * 
+     * @param {number} limit 
+     * @returns {Array<Object>}
+     */
+    getTopPerformers(limit = 10) {
+        return this.#studentRepo.getTopPerformers(limit);
+    }
 }

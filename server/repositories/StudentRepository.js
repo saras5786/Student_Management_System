@@ -325,4 +325,21 @@ export class StudentRepository {
             attendanceRanges
         };
     }
+
+    /**
+     * Retrieve top academic performers for CSE Hall of Fame / Dean's List.
+     * 
+     * @param {number} limit 
+     * @returns {Array<Object>}
+     */
+    getTopPerformers(limit = 10) {
+        const sql = `
+            SELECT student_id, name, semester, attendance, percentage, grade, grade_point, status
+            FROM students 
+            WHERE UPPER(status) = 'PASS'
+            ORDER BY percentage DESC 
+            LIMIT ?
+        `;
+        return this.#db.all(sql, [limit]);
+    }
 }

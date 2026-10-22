@@ -1,0 +1,7 @@
+student_id,name,gender,branch,semester,attendance,mathematics,physics,python,data_structures,english
+25b11cs001,Kalyanam Mukundha,Male,CSE,Semester 1,94.5,93.2,91.7,93.6,95.8,91.4
+25b11cs002,Ananya Sharma,Female,CSE,Semester 1,96,95.5,94,98,97,93.5
+25b11cs003,Rahul Varma,Male,CSE,Semester 2,82,78,81,85,79.5,84
+25b11cs004,Sneha Reddy,Female,CSE,Semester 2,91,89,92.5,94,90,88.5
+25b11cs005,Venkatesh Rao,Male,CSE,Semester 3,71.5,62,58.5,66,61,55
+25b11cs006,Pooja Hegde,Female,CSE,Semester 1,68,48,44,52,46,49
