@@ -114,11 +114,20 @@ export class AuthenticationManager {
             if (banner && otpCodeSpan) {
                 otpCodeSpan.textContent = data.demoOtp;
                 banner.classList.remove('hidden');
+                // Make banner clickable to auto-fill
+                banner.style.cursor = 'pointer';
+                banner.title = 'Click to auto-fill OTP code';
+                banner.onclick = () => {
+                    if (otpInput) otpInput.value = data.demoOtp;
+                };
             }
 
             if (otpSection) {
                 otpSection.classList.remove('hidden');
-                otpInput?.focus();
+                if (otpInput) {
+                    otpInput.value = data.demoOtp; // Auto-fill code immediately for instant login
+                    otpInput.focus();
+                }
             }
 
             this.#startOTPTimer(data.expiresIn || 60);
@@ -173,13 +182,20 @@ export class AuthenticationManager {
     async handleStudentVerifyOTP() {
         const idInput = document.getElementById('student-id-input');
         const otpInput = document.getElementById('otp-code-input');
+        const otpCodeSpan = document.getElementById('demo-otp-code');
         const btn = document.getElementById('btn-verify-otp');
 
         const studentId = (idInput?.value || '').trim().toLowerCase();
-        const otpCode = (otpInput?.value || '').trim();
+        let otpCode = (otpInput?.value || '').trim();
+
+        // Fallback to banner code if empty
+        if ((!otpCode || otpCode.length !== 6) && otpCodeSpan && otpCodeSpan.textContent && otpCodeSpan.textContent.length === 6) {
+            otpCode = otpCodeSpan.textContent.trim();
+            if (otpInput) otpInput.value = otpCode;
+        }
 
         if (!otpCode || otpCode.length !== 6) {
-            this.#notifications.error('Please enter the valid 6-digit OTP code.');
+            this.#notifications.error('Please enter the 6-digit OTP code.');
             otpInput?.focus();
             return;
         }
@@ -189,7 +205,8 @@ export class AuthenticationManager {
         try {
             const data = await this.#api.post('/auth/student/verify-otp', {
                 studentId,
-                otpCode
+                otpCode,
+                otp: otpCode
             });
 
             this.#api.setToken(data.token);
